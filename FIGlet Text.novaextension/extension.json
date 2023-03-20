@@ -258,5 +258,6 @@
         ]
     },
 
-    "bugs": "https://danremollino.dev"
+    "bugs": "https://github.com/danremollino/nova-figlet/issues",
+    "repository": "https://github.com/danremollino/nova-figlet"
 }

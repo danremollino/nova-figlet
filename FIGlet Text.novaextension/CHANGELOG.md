@@ -1,5 +1,7 @@
 ## Version 1.5.1
 - added extension to 'formatters' category
+- added Repository link
+- updated Bug Reports link
 
 ## Version 1.5
 - check for and remove some FIGlet fonts adding lines containing only whitespace at conversion
