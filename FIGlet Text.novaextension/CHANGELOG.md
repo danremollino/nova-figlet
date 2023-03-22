@@ -1,3 +1,6 @@
+## Version 1.6
+- added option to auto comment FIGlet converted output for CSS, HTML, Javascript, and PHP syntaxes
+
 ## Version 1.5.1
 - added extension to 'formatters' category
 - added Repository link

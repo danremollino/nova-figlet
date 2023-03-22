@@ -31,8 +31,12 @@ nova.commands.register('figlet', (workspace, figletArgs, textToConvert, postConv
     let figTextStr = ''
     process.onDidExit(status => {
         if (status === 0) {
-            // the converted text from FIGlet as a string
-            figTextStr = figTextArr.join('').trimEnd()
+            // trim any whitespace from the end of each line; FIGlet seems
+            // to add a single column of whitespace more than what is required
+            figTextArr = figTextArr.map(line => { return line.trimEnd() })
+
+            // convert to a string
+            figTextStr = figTextArr.join('\n')
             postConversion(figTextStr)
         }
     })
@@ -41,18 +45,7 @@ nova.commands.register('figlet', (workspace, figletArgs, textToConvert, postConv
 })
 
 // FIGlet convert the selected text in the editor
-nova.commands.register('createFigletText', editor => {
-    // console.log(editor.document.syntax)
-
-    let printNewLines = numOfLines => {
-        let newLinesStr = ''
-        while (numOfLines > 0) {
-            newLinesStr += '\n'
-            numOfLines--
-        }
-        return newLinesStr
-    }
-
+nova.commands.register('figletTextEditor', editor => {
     let figConfig = {
         font:            '-f' + nova.config.get('figlet_text.font', 'string'),
         outputWidth:     '-w' + nova.config.get('figlet_text.outputWidth', 'number'),
@@ -60,6 +53,16 @@ nova.commands.register('createFigletText', editor => {
         justification:   nova.config.get('figlet_text.justification', 'string'),
     }
 
+    let syntax = editor.document.syntax
+    let comment = nova.config.get('figlet_text.comment', 'boolean')
+    let commentPadding = nova.config.get('figlet_text.commentPadding', 'number')
+    let commentPaddingStr = nova.config.get('figlet_text.commentPaddingStr', 'string')
+    let commentChars = {
+        css: {start: '/*', end: '*/'},
+        html: {start: '<!--', end: '-->'},
+        javascript: {start: '//', end: ''},
+        php: {start: '//', end: ''}
+    }
     let prependNewLines = nova.config.get('figlet_text.prependNewLines', 'number')
     let appendNewLines = nova.config.get('figlet_text.appendNewLines', 'number')
 
@@ -69,15 +72,32 @@ nova.commands.register('createFigletText', editor => {
         let text = editor.getTextInRange(range)
 
         nova.commands.invoke('figlet', figConfig, text, figletText => {
-            // // prepend/append new lines
-            if (appendNewLines > 0) { figletText = figletText.concat(printNewLines(figConfig.appendNewLines)) }
-            if (prependNewLines > 0) { figletText = printNewLines(figConfig.prependNewLines).concat(figletText) }
+            // comment each line if the option is selected
+            if (comment && (syntax === 'css' || syntax === 'html' || syntax === 'javascript' || syntax === 'php')) {
+                let lines = figletText.split('\n')
 
-            // replace the selection with the converted FIGlet text
-            editor.edit(e => {
-                e.replace(range, figletText)
-            })
+                let longestLine = 0
+                lines.map(line => {
+                    if (line.length > longestLine) longestLine = line.length
+                })
 
+                let linesCommented = lines.map(line => {
+                    let linePadding = 0
+                    if (line.length < longestLine && (commentChars[syntax].end !== '')) linePadding = longestLine - line.length
+                    return `${commentChars[syntax].start}${commentPaddingStr.repeat(commentPadding)}${line}${' '.repeat(linePadding)}${commentPaddingStr.repeat(commentPadding)}${commentChars[syntax].end}`.trimEnd()
+                })
+
+                figletText = linesCommented.join('\n')
+            }
+
+            // prepend/append new lines
+            if (prependNewLines > 0) figletText = `${'\n'.repeat(prependNewLines)}${figletText}`
+            if (appendNewLines > 0) figletText = `${figletText}${'\n'.repeat(appendNewLines)}`
+
+            // replace the selection with the converted/transformed FIGlet text
+            editor.edit(e => { e.replace(range, figletText) })
+
+            // deselect and position the cursor
             editor.moveRight(1)
         })
     }

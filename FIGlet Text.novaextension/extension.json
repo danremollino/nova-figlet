@@ -3,7 +3,7 @@
     "name": "FIGlet Text",
     "organization": "Dan Remollino",
     "description": "Convert selected text to FIGlet. Great for adding readable text to the Minimap, creating l33t text headers, and organizing files.",
-    "version": "1.5.1",
+    "version": "1.6",
     "categories": ["commands", "formatters"],
 
     "entitlements": {
@@ -199,7 +199,7 @@
         {
             "type": "section",
             "required": false,
-            "title": "Output",
+            "title": "Text",
             "children": [
                 {
                     "key": "figlet_text.outputWidth",
@@ -228,6 +228,35 @@
                     "radio": false,
                     "values": [["-x", "Auto"], ["-l", "Left"], ["-c", "Center"], ["-r", "Right"]],
                     "default": "-x"
+                }
+            ]
+        },
+
+        {
+            "type": "section",
+            "required": false,
+            "title": "Transformation",
+            "children": [
+                {
+                    "key": "figlet_text.comment",
+                    "title": "Comment FIGlet Output",
+                    "description": "FIGlet Text will auto line comment the output. Currently supported in CSS, HTML, Javascript, and PHP syntaxes.",
+                    "type": "boolean",
+                    "default": true
+                },
+                {
+                    "key": "figlet_text.commentPadding",
+                    "title": "Comment Padding",
+                    "description": "The number of Comment Padding Characters to add between the converted text and comment symbols.",
+                    "type": "number",
+                    "default": 4
+                },
+                {
+                    "key": "figlet_text.commentPaddingStr",
+                    "title": "Comment Padding Character",
+                    "description": "Text string to use as Comment Padding. Defaults to a single space.",
+                    "type": "string",
+                    "default": " "
                 },
                 {
                     "key": "figlet_text.prependNewLines",
@@ -250,8 +279,8 @@
     "commands": {
         "editor": [
             {
-                "title": "Create FIGlet Text from Selection",
-                "command": "createFigletText",
+                "title": "Convert Selection to FIGlet",
+                "command": "figletTextEditor",
                 "shortcut": "ctrl-opt-cmd-f",
                 "when": "editorHasSelection"
             }
