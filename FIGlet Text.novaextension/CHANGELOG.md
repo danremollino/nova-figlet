@@ -1,3 +1,6 @@
+## Version 1.6.4
+- updated README.md
+
 ## Version 1.6.3
 - refactored transformation workflow when outputting FIGlet converted text to the editor
 
