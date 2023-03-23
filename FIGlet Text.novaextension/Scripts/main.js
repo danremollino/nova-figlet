@@ -108,6 +108,10 @@ nova.commands.register('figletTextEditor', editor => {
                 figletText = linesCommented.join('\n')
             }
 
+            // prepend/append new lines
+            if (prependNewLines > 0) figletText = `${'\n'.repeat(prependNewLines)}${figletText}`
+            if (appendNewLines > 0) figletText = `${figletText}${'\n'.repeat(appendNewLines)}`
+
             if (!indentRange.empty) {
                 let lines = figletText.split('\n')
                 let indentText = editor.getTextInRange(indentRange)
@@ -120,10 +124,6 @@ nova.commands.register('figletTextEditor', editor => {
                 })
                 figletText = linesIndented.join('\n')
             }
-
-            // prepend/append new lines
-            if (prependNewLines > 0) figletText = `${'\n'.repeat(prependNewLines)}${figletText}`
-            if (appendNewLines > 0) figletText = `${figletText}${'\n'.repeat(appendNewLines)}`
 
             // replace the selection with the fully final FIGlet text
             editor.edit(e => { e.replace(range, figletText) })

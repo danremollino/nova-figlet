@@ -1,3 +1,6 @@
+## Version 1.6.2
+- fixed FIGlet converted text on indented selections with prepended or appended lines
+
 ## Version 1.6.1
 - fixed FIGlet converted text output on indented selections
 - refactored auto comment code
