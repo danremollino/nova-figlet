@@ -72,61 +72,64 @@ nova.commands.register('figletTextEditor', editor => {
                 return null
         }
     }
-    let prependNewLines = nova.config.get('figlet_text.prependNewLines', 'number')
-    let appendNewLines = nova.config.get('figlet_text.appendNewLines', 'number')
+
+    // subtract one; will Array.prototype.join('\n') before final editor output
+    let prependNewLines = nova.config.get('figlet_text.prependNewLines', 'number') - 1
+    let appendNewLines = nova.config.get('figlet_text.appendNewLines', 'number') - 1
 
     let selectedRanges = editor.selectedRanges.reverse()
 
     for (let range of selectedRanges) {
         let text = editor.getTextInRange(range)
         let indentRange = new Range(editor.getLineRangeForRange(range).start, range.start)
+        let indentText = editor.getTextInRange(indentRange)
 
         nova.commands.invoke('figlet', figConfig, text, figletText => {
-            // comment each line if the option is selected
-            // and the comment structure is defined
-            if (comment && getCommentChars() !== null) {
-                // convert the FIGlet string to an array of strings
-                // to make it easier to comment line by line
-                let lines = figletText.split('\n')
+            // convert the FIGlet string to an array of strings to make it
+            // easier to modify line by line; order of transformations matter
+            let figletTextArr = figletText.split('\n')
 
+            // comment each line if the option is selected and a
+            // comment structure is defined for the current syntax
+            if (comment && getCommentChars() !== null) {
                 // find the longest line so we can add whitespace to shorter
                 // lines so closing comments line up if the syntax uses them
                 let longestLine = 0
-                lines.map(line => { if (line.length > longestLine) longestLine = line.length })
+                figletTextArr.map(line => { if (line.length > longestLine) longestLine = line.length })
 
                 // add the comment characters, lengthen lines with closing
                 // comments, and add user configured comment padding
-                let linesCommented = lines.map(line => {
+                figletTextArr = figletTextArr.map(line => {
                     let linePadding = 0
                     if (line.length < longestLine && (getCommentChars().end !== '')) linePadding = longestLine - line.length
 
                     // return the fully commented and formatted array of strings
                     return `${getCommentChars().start}${commentPaddingStr.repeat(commentPadding)}${line}${' '.repeat(linePadding)}${commentPaddingStr.repeat(commentPadding)}${getCommentChars().end}`.trimEnd()
                 })
-
-                // convert the array of strings to a single string
-                figletText = linesCommented.join('\n')
             }
 
             // prepend/append new lines
-            if (prependNewLines > 0) figletText = `${'\n'.repeat(prependNewLines)}${figletText}`
-            if (appendNewLines > 0) figletText = `${figletText}${'\n'.repeat(appendNewLines)}`
+            if (prependNewLines > 0) figletTextArr = Array.of(`${'\n'.repeat(prependNewLines)}`).concat(figletTextArr)
+            if (appendNewLines > 0) figletTextArr = figletTextArr.concat(Array.of(`${'\n'.repeat(appendNewLines)}`))
 
+            // indent subsequent lines after the line
+            // with an initial indented selection
             if (!indentRange.empty) {
-                let lines = figletText.split('\n')
-                let indentText = editor.getTextInRange(indentRange)
-                let linesIndented = lines.map((line, index) => {
+                figletTextArr = figletTextArr.map((line, index) => {
                     if (index === 0) {
-                        return `${line}`.trimEnd()
+                        return `${line}`
                     } else {
-                        return `${indentText}${line}`.trimEnd()
+                        return `${indentText}${line}`
                     }
                 })
-                figletText = linesIndented.join('\n')
             }
 
-            // replace the selection with the fully final FIGlet text
-            editor.edit(e => { e.replace(range, figletText) })
+            // convert the array of strings to a
+            // single string for output to editor
+            let figletTextStr = figletTextArr.join('\n')
+
+            // replace the selection with the fully transformed FIGlet text
+            editor.edit(e => { e.replace(range, figletTextStr) })
 
             // deselect and position the cursor
             editor.moveRight(1)

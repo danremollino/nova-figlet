@@ -1,3 +1,6 @@
+## Version 1.6.3
+- refactored transformation workflow when outputting FIGlet converted text to the editor
+
 ## Version 1.6.2
 - fixed FIGlet converted text on indented selections with prepended or appended lines
 
