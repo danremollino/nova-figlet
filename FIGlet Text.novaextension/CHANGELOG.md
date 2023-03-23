@@ -1,3 +1,8 @@
+## Version 1.6.1
+- fixed FIGlet converted text output on indented selections
+- refactored auto comment code
+- added SCSS and Typescript auto comment support
+
 ## Version 1.6
 - added option to auto comment FIGlet converted output for CSS, HTML, Javascript, and PHP syntaxes
 

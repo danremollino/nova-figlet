@@ -3,7 +3,7 @@
     "name": "FIGlet Text",
     "organization": "Dan Remollino",
     "description": "Convert selected text to FIGlet. Great for adding readable text to the Minimap, creating l33t text headers, and organizing files.",
-    "version": "1.6",
+    "version": "1.6.1",
     "categories": ["commands", "formatters"],
 
     "entitlements": {
@@ -240,7 +240,7 @@
                 {
                     "key": "figlet_text.comment",
                     "title": "Comment FIGlet Output",
-                    "description": "FIGlet Text will auto line comment the output. Currently supported in CSS, HTML, Javascript, and PHP syntaxes.",
+                    "description": "FIGlet Text will auto line comment the output. Currently supported in CSS, HTML, Javascript, PHP, Typescript, and SCSS syntaxes.",
                     "type": "boolean",
                     "default": true
                 },

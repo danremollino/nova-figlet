@@ -2,7 +2,7 @@
 - convert selected text to FIGlet text
 - select FIGlet font
 - configure FIGlet text output options
-- option to auto comment converted text (HTML, Javascript, and PHP syntaxes only)
+- option to auto comment converted text; supported syntaxes: CSS, HTML, Javascript, PHP, Typescript, and SCSS
 - prepend/append new lines to converted text
 
 # Requirements
