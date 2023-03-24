@@ -1,3 +1,6 @@
+## Version 1.7
+- added 'Preview All Installed FIGlet Fonts' to Extensions menu
+
 ## Version 1.6.4
 - updated README.md
 

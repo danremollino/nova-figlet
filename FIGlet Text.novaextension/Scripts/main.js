@@ -112,8 +112,8 @@ nova.commands.register('figletTextEditor', editor => {
             if (prependNewLines > 0) figletTextArr = Array.of(`${'\n'.repeat(prependNewLines)}`).concat(figletTextArr)
             if (appendNewLines > 0) figletTextArr = figletTextArr.concat(Array.of(`${'\n'.repeat(appendNewLines)}`))
 
-            // indent subsequent lines after the line
-            // with an initial indented selection
+            // indent subsequent lines after the first if
+            // the line with the selection was indented
             if (!indentRange.empty) {
                 figletTextArr = figletTextArr.map((line, index) => {
                     if (index === 0) {
@@ -159,4 +159,33 @@ nova.config.onDidChange('figlet_text.font', (newValue, oldValue) => {
 // listen for changes to the Preview Text input in the extension config
 nova.config.onDidChange('figlet_text.previewText', (newValue, oldValue) => {
     nova.commands.invoke('figletTextFontPreview')
+})
+
+
+// preview all installed FIGlet fonts in an editor
+nova.commands.register('figletTextFontPreviewAll', workspace => {
+    let message = 'Enter a custom preview text. Leave blank to use the font name for each font preview text output.'
+    let options = {label: 'Preview Text', placeholder: 'Use Font Name', prompt: 'Generate Previews'}
+    workspace.showInputPanel(message, options, value => {
+        if (typeof value !== 'undefined') {
+            const process = new Process('/usr/bin/env', {args: ['showfigfonts', value]})
+
+            let preview = ''
+            process.onStdout(line => {
+                preview += line
+            })
+
+            process.onDidExit(status => {
+                if (status === 0) {
+                    workspace.openFile(nova.fs.tempdir + '/FIGlet Text | All Fonts Preview.txt')
+                    .then(editor => {
+                        editor.edit(e => { e.insert(0, preview) })
+                        editor.scrollToPosition(0)
+                    })
+                }
+            })
+
+            process.start()
+        }
+    })
 })

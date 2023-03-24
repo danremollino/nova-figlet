@@ -6,6 +6,7 @@
 - configure FIGlet text output options
 - auto comment converted text; supported syntaxes: CSS, HTML, Javascript, PHP, Typescript, and SCSS
 - prepend/append new lines to converted text
+- generate a custom preview of all installed FIGlet fonts
 
 # Requirements
 
@@ -20,4 +21,4 @@ FIGlet Text will add a 'Convert Selection to FIGlet' menu item to the Editor men
 
 # Planned Features
 - additional fonts
-- all installed fonts preview
+- borders

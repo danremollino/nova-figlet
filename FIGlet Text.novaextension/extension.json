@@ -3,14 +3,14 @@
     "name": "FIGlet Text",
     "organization": "Dan Remollino",
     "description": "Convert selected text to FIGlet. Great for adding readable text to the Minimap, creating l33t text headers, and organizing files.",
-    "version": "1.6.4",
+    "version": "1.7",
     "categories": ["commands", "formatters"],
 
     "entitlements": {
         "clipboard": false,
         "process": true,
         "requests": false,
-        "filesystem": false
+        "filesystem": "readwrite"
     },
 
     "main": "main.js",
@@ -25,7 +25,6 @@
                     "key": "figlet_text.font",
                     "title": "Font",
                     "description": "The FIGlet font to use when converting text.",
-                    "link": "http://www.figlet.org/examples.html",
                     "type": "enum",
                     "radio": false,
                     "values": [
@@ -190,7 +189,7 @@
                 {
                     "key": "figlet_text.preview",
                     "title": "Preview",
-                    "description": "Admittedly, this isn't the ideal preview as Nova uses a non-monospaced font for the Preview textbox above. Use the (?) link in the Font selection preference above to open the FIGlet examples webpage in an external browser, or copy the text above and paste it into an editor window.",
+                    "description": "Admittedly, this isn't the ideal preview as Nova uses a non-monospaced output for the Preview textbox above. Use the Extensions -> Preview All Installed FIGlet Fonts menu item to generate an accurate, custom text FIGlet font preview document.",
                     "type": "text"
                 }
             ]
@@ -283,6 +282,12 @@
                 "command": "figletTextEditor",
                 "shortcut": "ctrl-opt-cmd-f",
                 "when": "editorHasSelection"
+            }
+        ],
+        "extensions": [
+            {
+                "title": "Preview All Installed FIGlet Fonts",
+                "command": "figletTextFontPreviewAll"
             }
         ]
     },
