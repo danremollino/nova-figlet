@@ -11,11 +11,24 @@
  * @returns a Disposable, see Nova extension docs https://docs.nova.app/api-reference/disposable/
  */
 nova.commands.register('figlet', (workspace, figletArgs, textToConvert, postConversion) => {
+    const fontSubDir = nova.config.get('figlet_text.font', 'string').match(/^.*\/\s*/)
+    const fontDir = () => {
+        if ( fontSubDir !== null) {
+            return '/usr/local/Cellar/figlet/2.2.5/share/figlet/fonts/' + fontSubDir
+        }
+        return '/usr/local/Cellar/figlet/2.2.5/share/figlet/fonts/'
+    }
+
     let args = ['figlet']
     for (const arg in figletArgs) {
         args.push(figletArgs[arg])
     }
-    args.push(textToConvert)
+
+    args.push(
+        '-d' + fontDir(),
+        '-f' + nova.config.get('figlet_text.font', 'string').replace(fontSubDir, ''),
+        textToConvert
+    )
 
     const process = new Process('/usr/bin/env', {args})
 
@@ -48,7 +61,6 @@ nova.commands.register('figlet', (workspace, figletArgs, textToConvert, postConv
 // FIGlet convert the selected text in the editor
 nova.commands.register('figletTextEditor', editor => {
     let figConfig = {
-        font:            '-f' + nova.config.get('figlet_text.font', 'string'),
         outputWidth:     '-w' + nova.config.get('figlet_text.outputWidth', 'number'),
         textDirection:   nova.config.get('figlet_text.textDirection', 'string'),
         justification:   nova.config.get('figlet_text.justification', 'string'),
@@ -142,8 +154,7 @@ nova.commands.register('figletTextEditor', editor => {
 nova.commands.register('figletTextFontPreview', workspace => {
     let figConfig = {
         kerning: '-k',
-        outputWidth: '-w' + 2000,
-        font: '-f' + nova.config.get('figlet_text.font', 'string')
+        outputWidth: '-w' + 2000
     }
 
     let text = nova.config.get('figlet_text.previewText', 'string')
@@ -162,7 +173,7 @@ nova.config.onDidChange('figlet_text.previewText', (newValue, oldValue) => {
 })
 
 
-// preview all installed FIGlet fonts in an editor
+// preview all installed FIGlet distributed fonts in an new editor
 nova.commands.register('figletTextFontPreviewAll', workspace => {
     let message = 'Enter a custom preview text. Leave blank to use the font name for each font preview text output.'
     let options = {label: 'Preview Text', placeholder: 'Use Font Name', prompt: 'Generate Previews'}

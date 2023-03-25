@@ -1,3 +1,10 @@
+## Version 1.8
+- fixed missing font links
+- added BDF and C64 font sets
+
+## Version 1.7.1
+- removed unneeded filesystem entitlement (again)
+
 ## Version 1.7
 - added 'Preview All Installed FIGlet Fonts' to Extensions menu
 

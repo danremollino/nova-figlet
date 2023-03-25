@@ -13,12 +13,11 @@
 ## FIGlet
 FIGlet Text requires [FIGlet](http://www.figlet.org) to be installed locally. This extension assumes FIGlet has been installed using [Homebrew](https://brew.sh). Once Homebrew is installed, simply run `brew install figlet` to install FIGlet.
 
-## Monospaced Fonts
-It is recommended to only use a monospaced font in Nova. Not doing so may result in garbled looking FIGlet conversions.
-
 # How to Use FIGlet Text
 FIGlet Text will add a 'Convert Selection to FIGlet' menu item to the Editor menu. Make one or more selections in the editor and run the command.
 
+# Known Issues
+- selected text with non-whitespace characters preceding the selection will output the text on each line
+
 # Planned Features
-- additional fonts
 - borders
