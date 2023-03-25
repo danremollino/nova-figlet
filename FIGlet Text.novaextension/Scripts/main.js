@@ -92,9 +92,16 @@ nova.commands.register('figletTextEditor', editor => {
     let selectedRanges = editor.selectedRanges.reverse()
 
     for (let range of selectedRanges) {
+        // the text to be processed
         let text = editor.getTextInRange(range)
+
+        // get the range of the start of the line with selection to the start of
+        // the selection and calculate the amount of characters for indentation
         let indentRange = new Range(editor.getLineRangeForRange(range).start, range.start)
-        let indentText = editor.getTextInRange(indentRange)
+        let indentText = (() => {
+            let charCount = editor.getTextInRange(indentRange).length
+            return ' '.repeat(charCount)
+        })()
 
         nova.commands.invoke('figlet', figConfig, text, figletText => {
             // convert the FIGlet string to an array of strings to make it
@@ -128,11 +135,8 @@ nova.commands.register('figletTextEditor', editor => {
             // the line with the selection was indented
             if (!indentRange.empty) {
                 figletTextArr = figletTextArr.map((line, index) => {
-                    if (index === 0) {
-                        return `${line}`
-                    } else {
-                        return `${indentText}${line}`
-                    }
+                    if (index === 0) { return `${line}` }
+                    return `${indentText}${line}`
                 })
             }
 

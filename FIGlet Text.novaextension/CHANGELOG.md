@@ -1,3 +1,6 @@
+## Version 1.8.1
+- fixed duplicate text on every output line when indented selection was preceded by non-whitespace characters
+
 ## Version 1.8
 - fixed missing font links
 - added BDF and C64 font sets

@@ -16,8 +16,5 @@ FIGlet Text requires [FIGlet](http://www.figlet.org) to be installed locally. Th
 # How to Use FIGlet Text
 FIGlet Text will add a 'Convert Selection to FIGlet' menu item to the Editor menu. Make one or more selections in the editor and run the command.
 
-# Known Issues
-- selected text with non-whitespace characters preceding the selection will output the text on each line
-
 # Planned Features
 - borders
