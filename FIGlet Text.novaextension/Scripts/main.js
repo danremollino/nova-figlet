@@ -25,8 +25,8 @@ nova.commands.register('figlet', (workspace, figletArgs, textToConvert, postConv
     }
 
     args.push(
-        '-d' + fontDir(),
-        '-f' + nova.config.get('figlet_text.font', 'string').replace(fontSubDir, ''),
+        '-d', fontDir(),
+        '-f', nova.config.get('figlet_text.font', 'string').replace(fontSubDir, ''),
         textToConvert
     )
 
@@ -98,7 +98,7 @@ nova.commands.register('figletTextEditor', editor => {
         // get the range of the start of the line with selection to the start of
         // the selection and calculate the amount of characters for indentation
         let indentRange = new Range(editor.getLineRangeForRange(range).start, range.start)
-        let indentText = (() => {
+        const indentText = (() => {
             let charCount = editor.getTextInRange(indentRange).length
             return ' '.repeat(charCount)
         })()
@@ -179,11 +179,28 @@ nova.config.onDidChange('figlet_text.previewText', (newValue, oldValue) => {
 
 // preview all installed FIGlet distributed fonts in an new editor
 nova.commands.register('figletTextFontPreviewAll', workspace => {
-    let message = 'Enter a custom preview text. Leave blank to use the font name for each font preview text output.'
-    let options = {label: 'Preview Text', placeholder: 'Use Font Name', prompt: 'Generate Previews'}
-    workspace.showInputPanel(message, options, value => {
-        if (typeof value !== 'undefined') {
-            const process = new Process('/usr/bin/env', {args: ['showfigfonts', value]})
+    workspace.showActionPanel('Select a Font Collection', {buttons: ['FIGlet', 'BDF', 'C64', 'Cancel']}, actionValue => {
+        // panel was canceled
+        if (actionValue === 3) return
+
+        const fontSubDir = (() => {
+            switch (actionValue) {
+                case 0:
+                    return ''
+                case 1:
+                    return 'bdffonts'
+                case 2:
+                    return 'C64-fonts'
+            }
+        })()
+
+        let message = 'Enter a custom preview text. Leave blank to use the font name for each font preview text output.'
+        let options = {label: 'Preview Text', placeholder: 'Use Font Name', prompt: 'Generate Previews'}
+        workspace.showInputPanel(message, options, inputValue => {
+            // panel was canceled
+            if (typeof inputValue === 'undefined') return
+
+            const process = new Process('/usr/bin/env', {args: ['showfigfonts', '-d', '/usr/local/Cellar/figlet/2.2.5/share/figlet/fonts/' + fontSubDir, inputValue]})
 
             let preview = ''
             process.onStdout(line => {
@@ -192,7 +209,7 @@ nova.commands.register('figletTextFontPreviewAll', workspace => {
 
             process.onDidExit(status => {
                 if (status === 0) {
-                    workspace.openFile(nova.fs.tempdir + '/FIGlet Text | All Fonts Preview.txt')
+                    workspace.openFile(nova.fs.tempdir + '/FIGlet Text | Font Collection Preview.txt')
                     .then(editor => {
                         editor.edit(e => { e.insert(0, preview) })
                         editor.scrollToPosition(0)
@@ -201,6 +218,6 @@ nova.commands.register('figletTextFontPreviewAll', workspace => {
             })
 
             process.start()
-        }
+        })
     })
 })

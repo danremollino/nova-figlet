@@ -1,15 +1,19 @@
+## Version 1.9
+- changed `Preview All Installed FIGlet Fonts` to `Generate FIGlet Font Collection Preview`
+- added font collection selection for `Generate FIGlet Font Collection Preview`
+
 ## Version 1.8.1
 - fixed duplicate text on every output line when indented selection was preceded by non-whitespace characters
 
 ## Version 1.8
 - fixed missing font links
-- added BDF and C64 font sets
+- added BDF and C64 font collections
 
 ## Version 1.7.1
 - removed unneeded filesystem entitlement (again)
 
 ## Version 1.7
-- added 'Preview All Installed FIGlet Fonts' to Extensions menu
+- added `Preview All Installed FIGlet Fonts` to Extensions menu
 
 ## Version 1.6.4
 - updated README.md

@@ -3,7 +3,7 @@
     "name": "FIGlet Text",
     "organization": "Dan Remollino",
     "description": "Convert selected text to FIGlet. Great for adding readable text to the Minimap, creating l33t text headers, and organizing files.",
-    "version": "1.8.1",
+    "version": "1.9",
     "categories": ["commands", "formatters"],
 
     "entitlements": {
@@ -24,7 +24,7 @@
                 {
                     "key": "figlet_text.font",
                     "title": "Font",
-                    "description": "The Homebrew install of FIGlet includes three font sets...\n\nFIGlet (unprefixed): The default fonts distributed with FIGlet\nBDF (bdffonts): BDF-format (X Windows) fonts distributed by the X Consortium\nC64 (C64-fonts): Commodore 64 fonts converted by by David Proper",
+                    "description": "The Homebrew install of FIGlet includes three font collections...\n\nFIGlet (unprefixed): The default fonts distributed with FIGlet\nBDF (bdffonts): BDF-format (X Windows) fonts distributed by the X Consortium\nC64 (C64-fonts): Commodore 64 fonts converted by by David Proper",
                     "type": "enum",
                     "radio": false,
                     "values": [
@@ -469,7 +469,7 @@
                 {
                     "key": "figlet_text.preview",
                     "title": "Preview",
-                    "description": "Admittedly, this isn't the ideal preview as Nova uses a non-monospaced output for the Preview textbox above.\n\nUse the Extensions -> Preview All Installed FIGlet Fonts menu item to generate an accurate, custom text FIGlet font preview document. This will only output the FIGlet distributed font set.",
+                    "description": "Admittedly, this isn't the ideal preview as Nova uses non-monospaced output for the Preview textbox above.\n\nUse the Extensions -> Generate FIGlet Font Collection Preview menu item to generate an accurate, custom text FIGlet font collection preview document.",
                     "type": "text"
                 }
             ]
@@ -564,7 +564,7 @@
         ],
         "extensions": [
             {
-                "title": "Preview All Installed FIGlet Fonts",
+                "title": "Generate FIGlet Font Collection Preview",
                 "command": "figletTextFontPreviewAll"
             }
         ]
