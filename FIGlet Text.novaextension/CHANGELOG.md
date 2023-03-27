@@ -1,3 +1,6 @@
+## Version 1.10.1
+- fixed right border not vertically aligning for some characters
+
 ## Version 1.10
 - added Borders option to add custom borders
 - added Padding option to adjust spacing between outputted text and borders

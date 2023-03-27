@@ -149,18 +149,20 @@ nova.commands.register('figletTextEditor', editor => {
                         switch (border) {
                             case 'left':
                                 figletTextArr = figletTextArr.map(line => {
-                                    if (!/^\s+$/.test(line)) return `${' '.repeat(borders[border].padding)}${line}`
+                                    if (!/^\s+$/.test(line)) return `${' '.repeat(borders.left.padding)}${line}`
                                 })
                                 break
                             case 'right':
                                 figletTextArr = figletTextArr.map(line => {
-                                    if (!/^\s+$/.test(line)) return `${line}${' '.repeat(borders[border].padding)}`
+                                    let additionalRightPadding = (borders.left.padding + longestLine + borders.right.padding) - (borders.left.padding + line.length + borders.right.padding)
+                                    if ( additionalRightPadding > 0) line = `${line}${' '.repeat(additionalRightPadding)}`
+                                    if (!/^\s+$/.test(line)) return `${line}${' '.repeat(borders.right.padding)}`
                                 })
                                 break
                             case 'top':
                                 if (borders.left.width === 0 && borders.right.width === 0) {
                                     // subtract one; will Array.prototype.join('\n') before final editor output
-                                    borderBuffer.paddingTop.push([`${'\n'.repeat(borders[border].padding - 1)}`])
+                                    borderBuffer.paddingTop.push([`${'\n'.repeat(borders.top.padding - 1)}`])
                                 } else {
                                     for (let count = borders.top.padding; count; count--) {
                                         borderBuffer.paddingTop.push(
@@ -172,7 +174,7 @@ nova.commands.register('figletTextEditor', editor => {
                             case 'bottom':
                                 if (borders.left.width === 0 && borders.right.width === 0) {
                                     // subtract one; will Array.prototype.join('\n') before final editor output
-                                    borderBuffer.paddingBottom.push([`${'\n'.repeat(borders[border].padding - 1)}`])
+                                    borderBuffer.paddingBottom.push([`${'\n'.repeat(borders.bottom.padding - 1)}`])
                                 } else {
                                     for (let count = borders.bottom.padding; count; count--) {
                                         borderBuffer.paddingBottom.push(
