@@ -1,5 +1,8 @@
+## Version 1.10.2
+- fixed right border not vertically aligning when right padding was set to 0
+
 ## Version 1.10.1
-- fixed right border not vertically aligning for some characters
+- fixed right padding not vertically aligning for transformations ending in certain characters
 
 ## Version 1.10
 - added Borders option to add custom borders

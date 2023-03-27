@@ -3,7 +3,7 @@
     "name": "FIGlet Text",
     "organization": "Dan Remollino",
     "description": "Convert selected text to FIGlet. Great for adding readable text to the Minimap, creating l33t text headers, and organizing files.",
-    "version": "1.10.1",
+    "version": "1.10.2",
     "categories": ["commands", "formatters"],
 
     "entitlements": {
@@ -611,7 +611,7 @@
                     "key": "figlet_text.borderRightPadding",
                     "title": "Right Padding",
                     "type": "number",
-                    "default": 5
+                    "default": 4
                 },
                 {
                     "key": "figlet_text.borderBottomPadding",
@@ -623,7 +623,7 @@
                     "key": "figlet_text.borderLeftPadding",
                     "title": "Left Padding",
                     "type": "number",
-                    "default": 5
+                    "default": 4
                 }
             ]
         },

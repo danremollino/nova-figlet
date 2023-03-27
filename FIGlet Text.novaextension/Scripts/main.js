@@ -154,9 +154,14 @@ nova.commands.register('figletTextEditor', editor => {
                                 break
                             case 'right':
                                 figletTextArr = figletTextArr.map(line => {
+                                    // nova.commands.register.figlet trims whitespace
+                                    // per line; they will not all be the same length
                                     let additionalRightPadding = (borders.left.padding + longestLine + borders.right.padding) - (borders.left.padding + line.length + borders.right.padding)
-                                    if ( additionalRightPadding > 0) line = `${line}${' '.repeat(additionalRightPadding)}`
-                                    if (!/^\s+$/.test(line)) return `${line}${' '.repeat(borders.right.padding)}`
+
+                                    if (!/^\s+$/.test(line)) {
+                                        if (additionalRightPadding > 0) line = `${line}${' '.repeat(additionalRightPadding)}`
+                                        return `${line}${' '.repeat(borders.right.padding)}`
+                                    }
                                 })
                                 break
                             case 'top':
@@ -195,7 +200,14 @@ nova.commands.register('figletTextEditor', editor => {
                                 break
                             case 'right':
                                 figletTextArr = figletTextArr.map(line => {
-                                    if (!/^\s+$/.test(line)) { return `${line}${borders[border].char.repeat(borders[border].width)}` }
+                                    // nova.commands.register.figlet trims whitespace
+                                    // per line; they will not all be the same length
+                                    let additionalRightPadding = (borders.left.padding + longestLine + borders.right.padding) - (borders.left.padding + line.length + borders.right.padding)
+
+                                    if (!/^\s+$/.test(line)) {
+                                        if (additionalRightPadding > 0) line = `${line}${' '.repeat(additionalRightPadding)}`
+                                        return `${line}${borders[border].char.repeat(borders[border].width)}`
+                                    }
                                 })
                                 break
                             case 'top':
