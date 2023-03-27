@@ -66,7 +66,31 @@ nova.commands.register('figletTextEditor', editor => {
         justification:   nova.config.get('figlet_text.justification', 'string'),
     }
 
-    let comment = nova.config.get('figlet_text.comment', 'boolean')
+    let bordersEnabled = nova.config.get('figlet_text.borders', 'boolean')
+    let borders = {
+        top: {
+            width: nova.config.get('figlet_text.borderTopWidth', 'number'),
+            padding: nova.config.get('figlet_text.borderTopPadding', 'number'),
+            char: nova.config.get('figlet_text.borderTopChar', 'string'),
+        },
+        right: {
+            width: nova.config.get('figlet_text.borderRightWidth', 'number'),
+            padding: nova.config.get('figlet_text.borderRightPadding', 'number'),
+            char: nova.config.get('figlet_text.borderRightChar', 'string'),
+        },
+        bottom: {
+            width: nova.config.get('figlet_text.borderBottomWidth', 'number'),
+            padding: nova.config.get('figlet_text.borderBottomPadding', 'number'),
+            char: nova.config.get('figlet_text.borderBottomChar', 'string'),
+        },
+        left: {
+            width: nova.config.get('figlet_text.borderLeftWidth', 'number'),
+            padding: nova.config.get('figlet_text.borderLeftPadding', 'number'),
+            char: nova.config.get('figlet_text.borderLeftChar', 'string'),
+        }
+    }
+
+    let commentsEnabled = nova.config.get('figlet_text.comment', 'boolean')
     let commentPadding = nova.config.get('figlet_text.commentPadding', 'number')
     let commentPaddingStr = nova.config.get('figlet_text.commentPaddingStr', 'string')
     const getCommentChars = () => {
@@ -108,9 +132,93 @@ nova.commands.register('figletTextEditor', editor => {
             // easier to modify line by line; order of transformations matter
             let figletTextArr = figletText.split('\n')
 
+            // add borders if the option is enabled
+            if (bordersEnabled) {
+                let longestLine = 0
+                figletTextArr.map(line => { if (line.length > longestLine) longestLine = line.length })
+
+                let additionalWidth = ((borders.left.width * borders.left.char.length) + borders.left.padding) + ((borders.right.width * borders.right.char.length) + borders.right.padding)
+
+                // top/bottom transformations need to be buffered and applied
+                // after left/right transformations which are done line by and
+                // are affected by top/bottom transformations if done in place
+                let borderBuffer = { paddingTop: [], paddingBottom: [], widthTop: [], widthBottom: [] }
+
+                for (const border in borders) {
+                    if (borders[border].padding > 0) {
+                        switch (border) {
+                            case 'left':
+                                figletTextArr = figletTextArr.map(line => {
+                                    if (!/^\s+$/.test(line)) return `${' '.repeat(borders[border].padding)}${line}`
+                                })
+                                break
+                            case 'right':
+                                figletTextArr = figletTextArr.map(line => {
+                                    if (!/^\s+$/.test(line)) return `${line}${' '.repeat(borders[border].padding)}`
+                                })
+                                break
+                            case 'top':
+                                if (borders.left.width === 0 && borders.right.width === 0) {
+                                    // subtract one; will Array.prototype.join('\n') before final editor output
+                                    borderBuffer.paddingTop.push([`${'\n'.repeat(borders[border].padding - 1)}`])
+                                } else {
+                                    for (let count = borders.top.padding; count; count--) {
+                                        borderBuffer.paddingTop.push(
+                                            borders.left.char.repeat(borders.left.width) + ' '.repeat(longestLine + borders.left.padding + borders.right.padding) + borders.left.char.repeat(borders.right.width)
+                                        )
+                                    }
+                                }
+                                break
+                            case 'bottom':
+                                if (borders.left.width === 0 && borders.right.width === 0) {
+                                    // subtract one; will Array.prototype.join('\n') before final editor output
+                                    borderBuffer.paddingBottom.push([`${'\n'.repeat(borders[border].padding - 1)}`])
+                                } else {
+                                    for (let count = borders.bottom.padding; count; count--) {
+                                        borderBuffer.paddingBottom.push(
+                                            borders.left.char.repeat(borders.left.width) + ' '.repeat(longestLine + borders.left.padding + borders.right.padding) + borders.left.char.repeat(borders.right.width)
+                                        )
+                                    }
+                                }
+                                break
+                        }
+                    }
+
+                    if (borders[border].width > 0) {
+                        switch (border) {
+                            case 'left':
+                                figletTextArr = figletTextArr.map(line => {
+                                    if (!/^\s+$/.test(line)) { return `${borders[border].char.repeat(borders[border].width)}${line}` }
+                                })
+                                break
+                            case 'right':
+                                figletTextArr = figletTextArr.map(line => {
+                                    if (!/^\s+$/.test(line)) { return `${line}${borders[border].char.repeat(borders[border].width)}` }
+                                })
+                                break
+                            case 'top':
+                                for (let count = 0; count < borders[border].width; count++) {
+                                    borderBuffer.widthTop.push(`${borders[border].char.repeat(longestLine + additionalWidth)}`)
+                                }
+                                break
+                            case 'bottom':
+                                for (let count = 0; count < borders[border].width; count++) {
+                                    borderBuffer.widthBottom.push(`${borders[border].char.repeat(longestLine + additionalWidth)}`)
+                                }
+                                break
+                        }
+                    }
+                }
+
+                if (!borderBuffer.paddingTop.empty) figletTextArr = borderBuffer.paddingTop.concat(figletTextArr)
+                if (!borderBuffer.paddingBottom.empty) figletTextArr = figletTextArr.concat(borderBuffer.paddingBottom)
+                if (!borderBuffer.widthTop.empty) figletTextArr = borderBuffer.widthTop.concat(figletTextArr)
+                if (!borderBuffer.widthBottom.empty) figletTextArr = figletTextArr.concat(borderBuffer.widthBottom)
+            }
+
             // comment each line if the option is selected and a
             // comment structure is defined for the current syntax
-            if (comment && getCommentChars() !== null) {
+            if (commentsEnabled && getCommentChars() !== null) {
                 // find the longest line so we can add whitespace to shorter
                 // lines so closing comments line up if the syntax uses them
                 let longestLine = 0
@@ -122,20 +230,21 @@ nova.commands.register('figletTextEditor', editor => {
                     let linePadding = 0
                     if (line.length < longestLine && (getCommentChars().end !== '')) linePadding = longestLine - line.length
 
-                    // return the fully commented and formatted array of strings
+                    // return the commented line if not whitespace
+                    if (/^\s+$/.test(line)) return '\n'
                     return `${getCommentChars().start}${commentPaddingStr.repeat(commentPadding)}${line}${' '.repeat(linePadding)}${commentPaddingStr.repeat(commentPadding)}${getCommentChars().end}`.trimEnd()
                 })
             }
 
             // prepend/append new lines
-            if (prependNewLines > 0) figletTextArr = Array.of(`${'\n'.repeat(prependNewLines)}`).concat(figletTextArr)
-            if (appendNewLines > 0) figletTextArr = figletTextArr.concat(Array.of(`${'\n'.repeat(appendNewLines)}`))
+            if (prependNewLines > 0) figletTextArr = [`${'\n'.repeat(prependNewLines)}`].concat(figletTextArr)
+            if (appendNewLines > 0) figletTextArr = figletTextArr.concat([`${'\n'.repeat(appendNewLines)}`])
 
             // indent subsequent lines after the first if
             // the line with the selection was indented
             if (!indentRange.empty) {
                 figletTextArr = figletTextArr.map((line, index) => {
-                    if (index === 0) { return `${line}` }
+                    if (index === 0) return `${line}`
                     return `${indentText}${line}`
                 })
             }

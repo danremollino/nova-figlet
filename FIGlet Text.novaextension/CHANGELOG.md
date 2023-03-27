@@ -1,3 +1,8 @@
+## Version 1.10
+- added Borders option to add custom borders
+- added Padding option to adjust spacing between outputted text and borders
+- changed New Lines option to Margins
+
 ## Version 1.9
 - changed `Preview All Installed FIGlet Fonts` to `Generate FIGlet Font Collection Preview`
 - added font collection selection for `Generate FIGlet Font Collection Preview`

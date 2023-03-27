@@ -5,8 +5,8 @@
 - select FIGlet font
 - configure FIGlet text output options
 - auto comment converted text; supported syntaxes: CSS, HTML, Javascript, PHP, Typescript, and SCSS
-- prepend/append new lines to converted text
-- generate a custom preview of all installed FIGlet fonts
+- add padding, borders, and margins
+- generate a custom previews of all Homebrew installed font collections
 
 # Requirements
 
@@ -15,6 +15,3 @@ FIGlet Text requires [FIGlet](http://www.figlet.org) to be installed locally. Th
 
 # How to Use FIGlet Text
 FIGlet Text will add a 'Convert Selection to FIGlet' menu item to the Editor menu. Make one or more selections in the editor and run the command.
-
-# Planned Features
-- borders

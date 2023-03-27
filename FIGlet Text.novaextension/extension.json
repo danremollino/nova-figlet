@@ -3,7 +3,7 @@
     "name": "FIGlet Text",
     "organization": "Dan Remollino",
     "description": "Convert selected text to FIGlet. Great for adding readable text to the Minimap, creating l33t text headers, and organizing files.",
-    "version": "1.9",
+    "version": "1.10",
     "categories": ["commands", "formatters"],
 
     "entitlements": {
@@ -18,7 +18,6 @@
     "config": [
         {
             "type": "section",
-            "required": false,
             "title": "Font",
             "children": [
                 {
@@ -476,8 +475,7 @@
         },
         {
             "type": "section",
-            "required": false,
-            "title": "Text",
+            "title": "Text Output",
             "children": [
                 {
                     "key": "figlet_text.outputWidth",
@@ -511,12 +509,11 @@
         },
         {
             "type": "section",
-            "required": false,
-            "title": "Transformation",
+            "title": "Comments",
             "children": [
                 {
                     "key": "figlet_text.comment",
-                    "title": "Comment FIGlet Output",
+                    "title": "Enable Comments",
                     "description": "FIGlet Text will auto line comment the output. Currently supported in CSS, HTML, Javascript, PHP, Typescript, and SCSS syntaxes.",
                     "type": "boolean",
                     "default": true
@@ -534,17 +531,117 @@
                     "description": "Text string to use as Comment Padding. Defaults to a single space.",
                     "type": "string",
                     "default": " "
+                }
+            ]
+        },
+        {
+            "type": "section",
+            "title": "Borders",
+            "description": "Border width and style.",
+            "children": [
+                {
+                    "key": "figlet_text.borders",
+                    "title": "Enable Borders",
+                    "description": "Toggle border output without needing to change individual border settings. This option also toggles Padding output.",
+                    "type": "bool",
+                    "default": false
                 },
                 {
+                    "key": "figlet_text.borderTopWidth",
+                    "title": "Top Border Width",
+                    "type": "number",
+                    "default": 2
+                },
+                {
+                    "key": "figlet_text.borderTopChar",
+                    "title": "Top Border Character",
+                    "type": "string",
+                    "default": "#"
+                },
+                {
+                    "key": "figlet_text.borderRightWidth",
+                    "title": "Right Border Width",
+                    "type": "number",
+                    "default": 3
+                },
+                {
+                    "key": "figlet_text.borderRightChar",
+                    "title": "Right Border Character",
+                    "type": "string",
+                    "default": "#"
+                },
+                {
+                    "key": "figlet_text.borderBottomWidth",
+                    "title": "Bottom Border Width",
+                    "type": "number",
+                    "default": 2
+                },
+                {
+                    "key": "figlet_text.borderBottomChar",
+                    "title": "Bottom Border Character",
+                    "type": "string",
+                    "default": "#"
+                },
+                {
+                    "key": "figlet_text.borderLeftWidth",
+                    "title": "Left Border Width",
+                    "type": "number",
+                    "default": 3
+                },
+                {
+                    "key": "figlet_text.borderLeftChar",
+                    "title": "Left Border Character",
+                    "type": "string",
+                    "default": "#"
+                }
+            ]
+        },
+        {
+            "type": "section",
+            "title": "Padding",
+            "description": "Spacing between FIGlet text and border. The 'Enable Borders' option must be checked under the Borders section for these options to have any effect.",
+            "children": [
+                {
+                    "key": "figlet_text.borderTopPadding",
+                    "title": "Top Padding",
+                    "type": "number",
+                    "default": 2
+                },
+                {
+                    "key": "figlet_text.borderRightPadding",
+                    "title": "Right Padding",
+                    "type": "number",
+                    "default": 5
+                },
+                {
+                    "key": "figlet_text.borderBottomPadding",
+                    "title": "Bottom Padding",
+                    "type": "number",
+                    "default": 2
+                },
+                {
+                    "key": "figlet_text.borderLeftPadding",
+                    "title": "Left Padding",
+                    "type": "number",
+                    "default": 5
+                }
+            ]
+        },
+        {
+            "type": "section",
+            "title": "Margins",
+            "description": "Spacing between FIGlet text and your content.",
+            "children": [
+                {
                     "key": "figlet_text.prependNewLines",
-                    "title": "Prepend New Lines",
+                    "title": "Top Margin",
                     "description": "Amount of new lines to prepend to the converted text.",
                     "type": "number",
                     "default": 0
                 },
                 {
                     "key": "figlet_text.appendNewLines",
-                    "title": "Append New Lines",
+                    "title": "Bottom Margin",
                     "description": "Amount of new lines to append to the converted text.",
                     "type": "number",
                     "default": 0
