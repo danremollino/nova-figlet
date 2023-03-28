@@ -1,4 +1,4 @@
-<img src="https://github.com/danremollino/nova-figlet/raw/master/FIGlet%20Text.novaextension/Images/screenshots/figlet_screenshot.png" width="800" alt="FIGlet Text Screenshot" />
+<img src="https://github.com/danremollino/nova-figlet/raw/master/FIGlet%20Text.novaextension/Images/screenshots/banner.png" width="800" alt="FIGlet Text" />
 
 # Features
 - convert selection to FIGlet text

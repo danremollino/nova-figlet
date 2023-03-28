@@ -483,7 +483,7 @@
                     "description": "The screen width FIGlet assumes when formatting its output. FIGlet will wrap text that is rendered larger than this value. An Output Width of 1 is a special value that tells FIGlet to print each non-space FIGcharacter on a separate line. This value will affect text justification.",
                     "link": "http://www.figlet.org/figlet-man.html",
                     "type": "number",
-                    "default": 80
+                    "default": 160
                 },
                 {
                     "key": "figlet_text.textDirection",
