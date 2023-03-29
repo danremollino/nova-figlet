@@ -91,27 +91,27 @@ nova.commands.register('figletTextEditor', editor => {
     }
 
     let commentsEnabled = nova.config.get('figlet_text.comment', 'boolean')
+    let commentType = nova.config.get('figlet_text.commentType', 'string')
     let commentPadding = nova.config.get('figlet_text.commentPadding', 'number')
     let commentPaddingStr = nova.config.get('figlet_text.commentPaddingStr', 'string')
     const getCommentChars = () => {
         switch (editor.document.syntax) {
             case 'css':
             case 'scss':
-                return {start: '/*', end: '*/'}
+                return {block: {start: '/*', end: '*/'}, inline: {start: '/*', end: '*/'}}
             case 'html':
-                return {start: '<!--', end: '-->'}
+                return {block: {start: '<!--', end: '-->'}, inline: {start: '<!--', end: '-->'}}
             case 'javascript':
             case 'typescript':
             case 'php':
-                return {start: '//', end: ''}
+                return {block: {start: '/*', end: '*/'}, inline: {start: '//', end: ''}}
             default:
                 return null
         }
     }
 
-    // subtract one; will Array.prototype.join('\n') before final editor output
-    let prependNewLines = nova.config.get('figlet_text.prependNewLines', 'number') - 1
-    let appendNewLines = nova.config.get('figlet_text.appendNewLines', 'number') - 1
+    let prependNewLines = nova.config.get('figlet_text.prependNewLines', 'number')
+    let appendNewLines = nova.config.get('figlet_text.appendNewLines', 'number')
 
     let selectedRanges = editor.selectedRanges.reverse()
 
@@ -233,26 +233,35 @@ nova.commands.register('figletTextEditor', editor => {
             // comment each line if the option is selected and a
             // comment structure is defined for the current syntax
             if (commentsEnabled && getCommentChars() !== null) {
-                // find the longest line so we can add whitespace to shorter
-                // lines so closing comments line up if the syntax uses them
-                let longestLine = 0
-                figletTextArr.map(line => { if (line.length > longestLine) longestLine = line.length })
+                switch (commentType) {
+                    case 'inline':
+                        // find the longest line so we can add whitespace to shorter
+                        // lines so closing comments line up if the syntax uses them
+                        let longestLine = 0
+                        figletTextArr.map(line => { if (line.length > longestLine) longestLine = line.length })
 
-                // add the comment characters, lengthen lines with closing
-                // comments, and add user configured comment padding
-                figletTextArr = figletTextArr.map(line => {
-                    let linePadding = 0
-                    if (line.length < longestLine && (getCommentChars().end !== '')) linePadding = longestLine - line.length
+                        // add the comment characters, lengthen lines with closing
+                        // comments, and add user configured comment padding
+                        figletTextArr = figletTextArr.map(line => {
+                            let linePadding = 0
+                            if (line.length < longestLine && (getCommentChars().end !== '')) linePadding = longestLine - line.length
 
-                    // return the commented line if not whitespace
-                    if (/^\s+$/.test(line)) return '\n'
-                    return `${getCommentChars().start}${commentPaddingStr.repeat(commentPadding)}${line}${' '.repeat(linePadding)}${commentPaddingStr.repeat(commentPadding)}${getCommentChars().end}`.trimEnd()
-                })
+                            // return the commented line if not whitespace
+                            if (/^\s+$/.test(line)) return '\n'
+                            return `${getCommentChars().inline.start}${commentPaddingStr.repeat(commentPadding)}${line}${' '.repeat(linePadding)}${commentPaddingStr.repeat(commentPadding)}${getCommentChars().inline.end}`.trimEnd()
+                        })
+                        break
+                    case 'block':
+                        figletTextArr.unshift(getCommentChars().block.start)
+                        figletTextArr.push(getCommentChars().block.end)
+                        break
+                }
             }
 
             // prepend/append new lines
-            if (prependNewLines > 0) figletTextArr = [`${'\n'.repeat(prependNewLines)}`].concat(figletTextArr)
-            if (appendNewLines > 0) figletTextArr = figletTextArr.concat([`${'\n'.repeat(appendNewLines)}`])
+            // subtract one; Array.prototype.join('\n') before editor output
+            if (prependNewLines > 0) figletTextArr = [`${'\n'.repeat(prependNewLines - 1)}`].concat(figletTextArr)
+            if (appendNewLines > 0) figletTextArr = figletTextArr.concat([`${'\n'.repeat(appendNewLines - 1)}`])
 
             // indent subsequent lines after the first if
             // the line with the selection was indented

@@ -1,3 +1,9 @@
+## Version 1.11
+- added option to use inline or block comments
+
+## Version 1.10.3
+- updated README.md banner image
+
 ## Version 1.10.2
 - fixed right border not vertically aligning when right padding was set to 0
 
