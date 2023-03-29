@@ -1,3 +1,7 @@
+## Version 1.12
+- added option toggle margin output
+- added separate Comment Padding output options for block and inline comments
+
 ## Version 1.11
 - added option to use inline or block comments
 

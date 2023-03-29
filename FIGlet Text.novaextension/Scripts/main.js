@@ -92,7 +92,10 @@ nova.commands.register('figletTextEditor', editor => {
 
     let commentsEnabled = nova.config.get('figlet_text.comment', 'boolean')
     let commentType = nova.config.get('figlet_text.commentType', 'string')
-    let commentPadding = nova.config.get('figlet_text.commentPadding', 'number')
+    let commentPadding = {
+        block: nova.config.get('figlet_text.commentPaddingBlock', 'number'),
+        inline: nova.config.get('figlet_text.commentPaddingInline', 'number')
+    }
     let commentPaddingStr = nova.config.get('figlet_text.commentPaddingStr', 'string')
     const getCommentChars = () => {
         switch (editor.document.syntax) {
@@ -110,6 +113,7 @@ nova.commands.register('figletTextEditor', editor => {
         }
     }
 
+    let marginsEnabled = nova.config.get('figlet_text.margins', 'boolean')
     let prependNewLines = nova.config.get('figlet_text.prependNewLines', 'number')
     let appendNewLines = nova.config.get('figlet_text.appendNewLines', 'number')
 
@@ -132,7 +136,7 @@ nova.commands.register('figletTextEditor', editor => {
             // easier to modify line by line; order of transformations matter
             let figletTextArr = figletText.split('\n')
 
-            // add borders if the option is enabled
+            // add borders/padding if the option is enabled
             if (bordersEnabled) {
                 let longestLine = 0
                 figletTextArr.map(line => { if (line.length > longestLine) longestLine = line.length })
@@ -230,7 +234,7 @@ nova.commands.register('figletTextEditor', editor => {
                 if (!borderBuffer.widthBottom.empty) figletTextArr = figletTextArr.concat(borderBuffer.widthBottom)
             }
 
-            // comment each line if the option is selected and a
+            // comment each line if the option is enabled and a
             // comment structure is defined for the current syntax
             if (commentsEnabled && getCommentChars() !== null) {
                 switch (commentType) {
@@ -248,20 +252,26 @@ nova.commands.register('figletTextEditor', editor => {
 
                             // return the commented line if not whitespace
                             if (/^\s+$/.test(line)) return '\n'
-                            return `${getCommentChars().inline.start}${commentPaddingStr.repeat(commentPadding)}${line}${' '.repeat(linePadding)}${commentPaddingStr.repeat(commentPadding)}${getCommentChars().inline.end}`.trimEnd()
+                            return `${getCommentChars().inline.start}${commentPaddingStr.repeat(commentPadding.inline)}${line}${' '.repeat(linePadding)}${commentPaddingStr.repeat(commentPadding.inline)}${getCommentChars().inline.end}`.trimEnd()
                         })
                         break
                     case 'block':
+                        if (commentPadding.block > 0) {
+                            figletTextArr.unshift('\n'.repeat(commentPadding.block - 1))
+                            figletTextArr.push('\n'.repeat(commentPadding.block - 1))
+                        }
                         figletTextArr.unshift(getCommentChars().block.start)
                         figletTextArr.push(getCommentChars().block.end)
                         break
                 }
             }
 
-            // prepend/append new lines
-            // subtract one; Array.prototype.join('\n') before editor output
-            if (prependNewLines > 0) figletTextArr = [`${'\n'.repeat(prependNewLines - 1)}`].concat(figletTextArr)
-            if (appendNewLines > 0) figletTextArr = figletTextArr.concat([`${'\n'.repeat(appendNewLines - 1)}`])
+            // add margins if the option is enabled
+            if (marginsEnabled) {
+                // subtract one; Array.prototype.join('\n') before editor output
+                if (prependNewLines > 0) figletTextArr = [`${'\n'.repeat(prependNewLines - 1)}`].concat(figletTextArr)
+                if (appendNewLines > 0) figletTextArr = figletTextArr.concat([`${'\n'.repeat(appendNewLines)}`])
+            }
 
             // indent subsequent lines after the first if
             // the line with the selection was indented

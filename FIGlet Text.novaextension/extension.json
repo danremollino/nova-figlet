@@ -3,7 +3,7 @@
     "name": "FIGlet Text",
     "organization": "Dan Remollino",
     "description": "Convert selected text to FIGlet. Great for adding readable text to the Minimap, creating l33t text headers, and organizing files.",
-    "version": "1.11",
+    "version": "1.12",
     "categories": ["commands", "formatters"],
 
     "entitlements": {
@@ -523,19 +523,26 @@
                     "title": "Comment Type",
                     "description": "Comment output line by line or as a single block.",
                     "type": "enum",
-                    "values": [["inline", "Inline"], ["block", "Block"]],
+                    "values": [["block", "Block"], ["inline", "Inline"]],
                     "default": "inline"
                 },
                 {
-                    "key": "figlet_text.commentPadding",
-                    "title": "Comment Padding",
-                    "description": "The number of Comment Padding Characters to add between the converted text and comment symbols.",
+                    "key": "figlet_text.commentPaddingBlock",
+                    "title": "Block Comment Padding",
+                    "description": "The number of new lines to add between the converted text and comment symbols.",
+                    "type": "number",
+                    "default": 1
+                },
+                {
+                    "key": "figlet_text.commentPaddingInline",
+                    "title": "Inline Comment Padding",
+                    "description": "The number of Comment Padding Characters to add between the converted text and comment symbols on each line.",
                     "type": "number",
                     "default": 4
                 },
                 {
                     "key": "figlet_text.commentPaddingStr",
-                    "title": "Comment Padding Character",
+                    "title": "Inline Comment Padding Character",
                     "description": "Text string to use as Comment Padding. Defaults to a single space.",
                     "type": "string",
                     "default": " "
@@ -641,18 +648,25 @@
             "description": "Spacing between FIGlet text and your content.",
             "children": [
                 {
+                    "key": "figlet_text.margins",
+                    "title": "Enable Margins",
+                    "description": "Toggle margin output without needing to change individual settings.",
+                    "type": "bool",
+                    "default": false
+                },
+                {
                     "key": "figlet_text.prependNewLines",
                     "title": "Top Margin",
                     "description": "Amount of new lines to prepend to the converted text.",
                     "type": "number",
-                    "default": 0
+                    "default": 4
                 },
                 {
                     "key": "figlet_text.appendNewLines",
                     "title": "Bottom Margin",
-                    "description": "Amount of new lines to append to the converted text.",
+                    "description": "Amount of new lines to append to the converted text. The curser will be placed on the line after the appended lines.",
                     "type": "number",
-                    "default": 0
+                    "default": 2
                 }
             ]
         }
