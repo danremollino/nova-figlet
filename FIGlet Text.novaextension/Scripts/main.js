@@ -61,9 +61,10 @@ nova.commands.register('figlet', (workspace, figletArgs, textToConvert, postConv
 // FIGlet convert the selected text in the editor
 nova.commands.register('figletTextEditor', editor => {
     let figConfig = {
-        outputWidth:     '-w' + nova.config.get('figlet_text.outputWidth', 'number'),
-        textDirection:   nova.config.get('figlet_text.textDirection', 'string'),
-        justification:   nova.config.get('figlet_text.justification', 'string'),
+        outputWidth:   '-w' + nova.config.get('figlet_text.outputWidth', 'number'),
+        charSpacing:   nova.config.get('figlet_text.charSpacing', 'string'),
+        textDirection: nova.config.get('figlet_text.textDirection', 'string'),
+        justification: nova.config.get('figlet_text.justification', 'string')
     }
 
     let bordersEnabled = nova.config.get('figlet_text.borders', 'boolean')
@@ -199,7 +200,7 @@ nova.commands.register('figletTextEditor', editor => {
                         switch (border) {
                             case 'left':
                                 figletTextArr = figletTextArr.map(line => {
-                                    if (!/^\s+$/.test(line)) { return `${borders[border].char.repeat(borders[border].width)}${line}` }
+                                    if (!/^\s+$/.test(line)) return `${borders[border].char.repeat(borders[border].width)}${line}`
                                 })
                                 break
                             case 'right':

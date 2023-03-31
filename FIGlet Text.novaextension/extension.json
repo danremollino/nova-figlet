@@ -3,7 +3,7 @@
     "name": "FIGlet Text",
     "organization": "Dan Remollino",
     "description": "Convert selected text to FIGlet. Great for adding readable text to the Minimap, creating l33t text headers, and organizing files.",
-    "version": "1.12",
+    "version": "1.13",
     "categories": ["commands", "formatters"],
 
     "entitlements": {
@@ -486,13 +486,23 @@
                     "default": 160
                 },
                 {
+                    "key": "figlet_text.charSpacing",
+                    "title": "Character Spacing",
+                    "description": "These options control how FIGlet spaces the FIGcharacters that it outputs. These options may or may not affect the character output depending on your font selection.",
+                    "link": "http://www.figlet.org/figlet-man.html",
+                    "type": "enum",
+                    "radio": false,
+                    "values": [["-s", "Default (-s)"], ["-S", "Smushing (-S)"], ["-k", "Kerning (-k)"], ["-W", "Full Width (-W)"]],
+                    "default": "-s"
+                },
+                {
                     "key": "figlet_text.textDirection",
                     "title": "Text Direction",
                     "description": "Controls whether FIGlet prints left-to-right or right-to-left. 'Auto' makes FIGlet use whichever is specified in the font file.",
                     "link": "http://www.figlet.org/figlet-man.html",
                     "type": "enum",
                     "radio": false,
-                    "values": [["-X", "Auto"], ["-L", "Left-to-right"], ["-R", "Right-to-left"]],
+                    "values": [["-X", "Auto (-X)"], ["-L", "Left-to-right (-L)"], ["-R", "Right-to-left (-R)"]],
                     "default": "-X"
                 },
                 {
@@ -502,7 +512,7 @@
                     "link": "http://www.figlet.org/figlet-man.html",
                     "type": "enum",
                     "radio": false,
-                    "values": [["-x", "Auto"], ["-l", "Left"], ["-c", "Center"], ["-r", "Right"]],
+                    "values": [["-x", "Auto (-x)"], ["-l", "Left (-l)"], ["-c", "Center (-c)"], ["-r", "Right (-r)"]],
                     "default": "-x"
                 }
             ]
