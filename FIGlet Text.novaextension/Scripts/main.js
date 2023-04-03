@@ -13,7 +13,7 @@
 nova.commands.register('figlet', (workspace, figletArgs, textToConvert, postConversion) => {
     const fontSubDir = nova.config.get('figlet_text.font', 'string').match(/^.*\/\s*/)
     const fontDir = () => {
-        if ( fontSubDir !== null) {
+        if (fontSubDir !== null) {
             return '/usr/local/Cellar/figlet/2.2.5/share/figlet/fonts/' + fontSubDir
         }
         return '/usr/local/Cellar/figlet/2.2.5/share/figlet/fonts/'
@@ -101,14 +101,26 @@ nova.commands.register('figletTextEditor', editor => {
     const getCommentChars = () => {
         switch (editor.document.syntax) {
             case 'css':
+            case 'sass':
             case 'scss':
                 return {block: {start: '/*', end: '*/'}, inline: {start: '/*', end: '*/'}}
             case 'html':
+            case 'xml':
                 return {block: {start: '<!--', end: '-->'}, inline: {start: '<!--', end: '-->'}}
             case 'javascript':
             case 'typescript':
             case 'php':
                 return {block: {start: '/*', end: '*/'}, inline: {start: '//', end: ''}}
+            case 'lua':
+                return {block: {start: '--[[', end: '--]]'}, inline: {start: '--', end: ''}}
+            case 'perl':
+                return {block: {start: '=', end: '=cut'}, inline: {start: '#', end: ''}}
+            case 'python':
+                return {block: {start: '"""', end: '"""'}, inline: {start: '#', end: ''}}
+            case 'ruby':
+                return {block: {start: '=begin', end: '=end'}, inline: {start: '#', end: ''}}
+            case 'yaml':
+                return {block: null, inline: {start: '#', end: ''}}
             default:
                 return null
         }
@@ -142,7 +154,7 @@ nova.commands.register('figletTextEditor', editor => {
                 let longestLine = 0
                 figletTextArr.map(line => { if (line.length > longestLine) longestLine = line.length })
 
-                let additionalWidth = ((borders.left.width * borders.left.char.length) + borders.left.padding) + ((borders.right.width * borders.right.char.length) + borders.right.padding)
+                let outputLength = longestLine + (((borders.left.width * borders.left.char.length) + borders.left.padding) + ((borders.right.width * borders.right.char.length) + borders.right.padding))
 
                 // top/bottom transformations need to be buffered and applied
                 // after left/right transformations which are done line by and
@@ -176,7 +188,7 @@ nova.commands.register('figletTextEditor', editor => {
                                 } else {
                                     for (let count = borders.top.padding; count; count--) {
                                         borderBuffer.paddingTop.push(
-                                            borders.left.char.repeat(borders.left.width) + ' '.repeat(longestLine + borders.left.padding + borders.right.padding) + borders.left.char.repeat(borders.right.width)
+                                            borders.left.char.repeat(borders.left.width) + ' '.repeat(longestLine + borders.left.padding + borders.right.padding) + borders.right.char.repeat(borders.right.width)
                                         )
                                     }
                                 }
@@ -188,7 +200,7 @@ nova.commands.register('figletTextEditor', editor => {
                                 } else {
                                     for (let count = borders.bottom.padding; count; count--) {
                                         borderBuffer.paddingBottom.push(
-                                            borders.left.char.repeat(borders.left.width) + ' '.repeat(longestLine + borders.left.padding + borders.right.padding) + borders.left.char.repeat(borders.right.width)
+                                            borders.left.char.repeat(borders.left.width) + ' '.repeat(longestLine + borders.left.padding + borders.right.padding) + borders.right.char.repeat(borders.right.width)
                                         )
                                     }
                                 }
@@ -217,12 +229,12 @@ nova.commands.register('figletTextEditor', editor => {
                                 break
                             case 'top':
                                 for (let count = 0; count < borders[border].width; count++) {
-                                    borderBuffer.widthTop.push(`${borders[border].char.repeat(longestLine + additionalWidth)}`)
+                                    borderBuffer.widthTop.push(`${borders[border].char.repeat(outputLength)}`.slice(0, outputLength))
                                 }
                                 break
                             case 'bottom':
                                 for (let count = 0; count < borders[border].width; count++) {
-                                    borderBuffer.widthBottom.push(`${borders[border].char.repeat(longestLine + additionalWidth)}`)
+                                    borderBuffer.widthBottom.push(`${borders[border].char.repeat(outputLength)}`.slice(0, outputLength))
                                 }
                                 break
                         }
@@ -235,37 +247,47 @@ nova.commands.register('figletTextEditor', editor => {
                 if (!borderBuffer.widthBottom.empty) figletTextArr = figletTextArr.concat(borderBuffer.widthBottom)
             }
 
-            // comment each line if the option is enabled and a
-            // comment structure is defined for the current syntax
-            if (commentsEnabled && getCommentChars() !== null) {
-                switch (commentType) {
-                    case 'inline':
-                        // find the longest line so we can add whitespace to shorter
-                        // lines so closing comments line up if the syntax uses them
-                        let longestLine = 0
-                        figletTextArr.map(line => { if (line.length > longestLine) longestLine = line.length })
+            let addComments = () => {
+                // comment if the option is enabled and a
+                // structure is defined for the current syntax
+                if (commentsEnabled && getCommentChars() !== null) {
+                    switch (commentType) {
+                        case 'inline':
+                            // find the longest line so we can add whitespace to shorter
+                            // lines so closing comments line up if the syntax uses them
+                            let longestLine = 0
+                            figletTextArr.map(line => { if (line.length > longestLine) longestLine = line.length })
 
-                        // add the comment characters, lengthen lines with closing
-                        // comments, and add user configured comment padding
-                        figletTextArr = figletTextArr.map(line => {
-                            let linePadding = 0
-                            if (line.length < longestLine && (getCommentChars().end !== '')) linePadding = longestLine - line.length
+                            // add the comment characters, lengthen lines with closing
+                            // comments, and add user configured comment padding
+                            figletTextArr = figletTextArr.map(line => {
+                                let linePadding = 0
+                                if (line.length < longestLine && (getCommentChars().end !== '')) linePadding = longestLine - line.length
 
-                            // return the commented line if not whitespace
-                            if (/^\s+$/.test(line)) return '\n'
-                            return `${getCommentChars().inline.start}${commentPaddingStr.repeat(commentPadding.inline)}${line}${' '.repeat(linePadding)}${commentPaddingStr.repeat(commentPadding.inline)}${getCommentChars().inline.end}`.trimEnd()
-                        })
-                        break
-                    case 'block':
-                        if (commentPadding.block > 0) {
-                            figletTextArr.unshift('\n'.repeat(commentPadding.block - 1))
-                            figletTextArr.push('\n'.repeat(commentPadding.block - 1))
-                        }
-                        figletTextArr.unshift(getCommentChars().block.start)
-                        figletTextArr.push(getCommentChars().block.end)
-                        break
+                                // return the commented line if not whitespace
+                                if (/^\s+$/.test(line)) return '\n'
+                                return `${getCommentChars().inline.start}${commentPaddingStr.repeat(commentPadding.inline)}${line}${' '.repeat(linePadding)}${commentPaddingStr.repeat(commentPadding.inline)}${getCommentChars().inline.end}`.trimEnd()
+                            })
+                            break
+                        case 'block':
+                            // if block comments are not available for syntax, use inline
+                            if (getCommentChars().block === null) {
+                                commentType = 'inline'
+                                addComments()
+                                break
+                            }
+
+                            if (commentPadding.block > 0) {
+                                figletTextArr.unshift('\n'.repeat(commentPadding.block - 1))
+                                figletTextArr.push('\n'.repeat(commentPadding.block - 1))
+                            }
+                            figletTextArr.unshift(getCommentChars().block.start)
+                            figletTextArr.push(getCommentChars().block.end)
+                            break
+                    }
                 }
             }
+            addComments()
 
             // add margins if the option is enabled
             if (marginsEnabled) {

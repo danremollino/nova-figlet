@@ -4,7 +4,7 @@
 - convert selection to FIGlet text
 - select FIGlet font
 - configure FIGlet text output options
-- auto comment converted text; supported syntaxes: CSS, HTML, Javascript, PHP, Typescript, and SCSS
+- auto comment converted text; supported syntaxes: CSS, HTML, Javascript, Lua, Perl, PHP, Python, Sass, SCSS, Typescript, Ruby, XML, and YAML
 - add padding, borders, and margins
 - generate a custom previews of all Homebrew installed font collections
 

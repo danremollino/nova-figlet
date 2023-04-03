@@ -1,3 +1,8 @@
+## Version 1.14
+- added Lua, Perl, Python, Ruby, SASS, XML, and YAML to list of supported languages for auto-commenting
+- fixed top/bottom border outputting too long if respective border character setting was greater than one character in length
+- fixed top/bottom border applying left border characters on the right border when a respective padding was set in conjuction with a left or right border
+
 ## Version 1.13
 - added option to set how FIGcharacters are spaced
 
