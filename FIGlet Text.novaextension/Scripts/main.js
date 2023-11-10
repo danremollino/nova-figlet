@@ -1,3 +1,15 @@
+let architecture = ''
+var process = new Process('/usr/bin/uname', { args: ['-m'] });
+process.onStdout((line) => {
+    architecture = line.trim()
+})
+process.start()
+
+const homebrewFontDir = () => {
+    if (architecture === 'arm64') return '/opt/homebrew/Cellar/figlet/2.2.5/share/figlet/fonts/'
+    if (architecture === 'x86_64') return '/usr/local/Cellar/figlet/2.2.5/share/figlet/fonts/'
+}
+
 /**
  * Convert the supplied text to FIGlet format
  *
@@ -14,9 +26,9 @@ nova.commands.register('figlet', (workspace, figletArgs, textToConvert, postConv
     const fontSubDir = nova.config.get('figlet_text.font', 'string').match(/^.*\/\s*/)
     const fontDir = () => {
         if (fontSubDir !== null) {
-            return '/usr/local/Cellar/figlet/2.2.5/share/figlet/fonts/' + fontSubDir
+            return homebrewFontDir() + fontSubDir
         }
-        return '/usr/local/Cellar/figlet/2.2.5/share/figlet/fonts/'
+        return homebrewFontDir()
     }
 
     let args = ['figlet']
@@ -365,7 +377,7 @@ nova.commands.register('figletTextFontPreviewAll', workspace => {
             // panel was canceled
             if (typeof inputValue === 'undefined') return
 
-            const process = new Process('/usr/bin/env', {args: ['showfigfonts', '-d', '/usr/local/Cellar/figlet/2.2.5/share/figlet/fonts/' + fontSubDir, inputValue]})
+            const process = new Process('/usr/bin/env', {args: ['showfigfonts', '-d', homebrewFontDir() + fontSubDir, inputValue]})
 
             let preview = ''
             process.onStdout(line => {

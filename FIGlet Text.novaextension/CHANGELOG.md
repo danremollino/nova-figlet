@@ -1,3 +1,6 @@
+## Version 1.15
+- added Apple silicon support
+
 ## Version 1.14
 - added Lua, Perl, Python, Ruby, SASS, XML, and YAML to list of supported languages for auto-commenting
 - fixed top/bottom border outputting too long if respective border character setting was greater than one character in length
